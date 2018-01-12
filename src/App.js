@@ -13,9 +13,14 @@ class App extends Component {
     let self = this
     axios.get('https://api.coinmarketcap.com/v1/ticker/?convert=THB')
     .then(function (response) {
-      let item = _.find(response.data, ['symbol', 'BTC'])
-      console.log(item.symbol, ":", item.price_thb)
-      self.setState({BTC: item.price_thb})
+      let price_state = {}
+      _.each(self.SYMBOLS, symbol =>{
+        price_state[symbol] = _.find(response.data, ['symbol', symbol]).price_thb
+      })
+    self.setState({
+      BTC: btc.price_thb,
+      OMG: omg.price_thb
+    })
     })
     .catch(function (error) {
       console.log(error);
@@ -24,9 +29,9 @@ class App extends Component {
 
   render() {
     return (
-      <div>
-        <Ticker symbol="BTC" price={this.state.BTC}/>
-      </div>
+    <div>
+      _.map(this.SYMBOLS, symbol => <Ticker symbol={symbol} price={this.state[symbol]}/>)
+              </div>
     );
   }
 }
